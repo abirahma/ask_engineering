@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>اسأل مهندس الكمبيوتر | Ask the Engineer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #050816;
+      --card: #0b1220;
+      --accent: #38bdf8;
+      --accent-soft: rgba(56, 189, 248, 0.18);
+      --text: #f9fafb;
+      --muted: #9ca3af;
+      --danger: #f97373;
+      --radius: 18px;
+      --shadow-soft: 0 18px 45px rgba(0, 0, 0, 0.65);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      background: radial-gradient(circle at top, #0f172a 0, #020617 40%, #000 100%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .app {
+      max-width: 1200px;
+      width: 100%;
+      margin: auto;
+      background: linear-gradient(145deg, rgba(15, 23, 42, 0.96), rgba(15, 23, 42, 0.9));
+      border-radius: 28px;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid rgba(148, 163, 184, 0.28);
+      padding: 22px 26px 26px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* زخارف خفيفة في الخلفية */
+    .app::before,
+    .app::after {
+      content: "";
+      position: absolute;
+      border-radius: 999px;
+      filter: blur(40px);
+      opacity: 0.22;
+      pointer-events: none;
+    }
+
+    .app::before {
+      width: 260px;
+      height: 260px;
+      background: radial-gradient(circle, #38bdf8, transparent 70%);
+      top: -80px;
+      left: -40px;
+    }
+
+    .app::after {
+      width: 280px;
+      height: 280px;
+      background: radial-gradient(circle, #a855f7, transparent 70%);
+      bottom: -120px;
+      right: -60px;
+    }
+
+    /* شعار بصمة مهندس */
+    .logo-mark {
+      position: absolute;
+      top: 16px;
+      left: 18px;
+      width: 80px;
+      max-width: 22vw;
+      filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.6));
+      z-index: 2;
+    }
+
+    header {
+      position: relative;
+      z-index: 1;
+      margin-bottom: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding-inline-end: 70px; /* عشان ما يدخل النص في الشعار */
+    }
+
+    .eyebrow {
+      font-size: 13px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.8);
+    }
+
+    h1 {
+      font-size: 26px;
+      font-weight: 700;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    h1 span.en {
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--muted);
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: var(--muted);
+      max-width: 650px;
+    }
+
+    .layout {
+      position: relative;
+      z-index: 1;
+      margin-top: 14px;
+      display: grid;
+      grid-template-columns: minmax(0, 3fr) minmax(280px, 2.6fr);
+      gap: 18px;
+    }
+
+    /* لوحة الأسئلة */
+    .questions-panel {
+      background: radial-gradient(circle at top right, rgba(56, 189, 248, 0.12), rgba(15, 23, 42, 0.96));
+      border-radius: 22px;
+      padding: 16px 16px 18px;
+      border: 1px solid rgba(51, 65, 85, 0.8);
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.95);
+    }
+
+    .questions-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      gap: 8px;
+    }
+
+    .panel-title {
+      font-size: 15px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .badge {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      color: var(--muted);
+    }
+
+    .questions-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .question-btn {
+      position: relative;
+      border-radius: 16px;
+      padding: 10px 11px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.14), rgba(15, 23, 42, 0.98));
+      color: var(--text);
+      font-size: 13px;
+      text-align: right;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+      display: flex;
+      align-items: flex-start;
+      gap: 7px;
+      min-height: 60px;
+    }
+
+    .question-btn span.icon {
+      font-size: 16px;
+      margin-top: 1px;
+    }
+
+    .question-btn span.text {
+      flex: 1;
+      line-height: 1.4;
+    }
+
+    .question-btn:hover {
+      transform: translateY(-2px);
+      border-color: rgba(56, 189, 248, 0.9);
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.9);
+      background: radial-gradient(circle at top, rgba(56, 189, 248, 0.18), rgba(15, 23, 42, 1));
+    }
+
+    .question-btn.active {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.5), 0 16px 38px rgba(15, 23, 42, 0.98);
+      background: radial-gradient(circle at top, rgba(56, 189, 248, 0.22), rgba(15, 23, 42, 1));
+    }
+
+    .question-index {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* لوحة الإجابة */
+    .answer-panel {
+      background: linear-gradient(145deg, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0.95));
+      border-radius: 22px;
+      padding: 16px 16px 18px;
+      border: 1px solid rgba(51, 65, 85, 0.9);
+      box-shadow: 0 14px 32px rgba(15, 23, 42, 0.95);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .answer-label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .answer-label .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+      animation: pulse 1.4s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+      }
+      70% {
+        transform: scale(1.25);
+        box-shadow: 0 0 0 10px rgba(34, 197, 94, 0);
+      }
+      100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+      }
+    }
+
+    .answer-question {
+      font-size: 15px;
+      font-weight: 600;
+      color: #e5e7eb;
+      line-height: 1.5;
+    }
+
+    .answer-text {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-top: 4px;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .chip {
+      font-size: 11px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      background: rgba(15, 23, 42, 0.96);
+      color: var(--muted);
+    }
+
+    .hint {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    /* شريط سفلي */
+    .footer-bar {
+      position: relative;
+      z-index: 1;
+      margin-top: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      color: var(--muted);
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      background: rgba(15, 23, 42, 0.96);
+    }
+
+    .status-pill span.dot-mini {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--accent);
+    }
+
+    .footer-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      font-size: 11px;
+      opacity: 0.9;
+    }
+
+    .brand strong {
+      color: var(--accent);
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .questions-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      h1 {
+        font-size: 22px;
+      }
+
+      .app {
+        padding: 18px 16px 18px;
+        border-radius: 20px;
+      }
+
+      header {
+        padding-inline-end: 0;
+      }
+
+      .logo-mark {
+        width: 64px;
+        top: 14px;
+        left: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <!-- شعار بصمة مهندس -->
+    <img class="logo-mark" src="basmat-mohandes-logo.png" alt="شعار بصمة مهندس" />
+
+    <header>
+      <div class="eyebrow">
+        <span class="dot"></span>
+        فعالية بصمة مهندس · ركن هندسة الكمبيوتر
+      </div>
+      <h1>
+        اسأل مهندس الكمبيوتر
+        <span class="en">Ask the Computer Engineer</span>
+      </h1>
+      <p class="subtitle">
+        اختر سؤالًا عن التخصص، واضغط عليه لتظهر لك الإجابة على الشاشة. هذه الزاوية عشان تعرف هل هندسة الكمبيوتر تناسبك أو لا. 💡
+      </p>
+    </header>
+
+    <section class="layout">
+      <!-- لوحة الأسئلة -->
+      <section class="questions-panel">
+        <div class="questions-header">
+          <div class="panel-title">
+            ❓ قائمة الأسئلة
+            <span class="badge">أسئلة تفاعلية لزوار بصمة مهندس</span>
+          </div>
+        </div>
+        <div class="questions-grid" id="questionsGrid">
+          <!-- الأزرار تُنشأ من خلال JavaScript -->
+        </div>
+      </section>
+
+      <!-- لوحة الإجابة -->
+      <section class="answer-panel" id="answerPanel">
+        <div class="answer-label">
+          <span class="pulse-dot"></span>
+          الإجابة على سؤالك
+        </div>
+        <div class="answer-question" id="answerQuestion">
+          اضغط على أي سؤال من القائمة لعرض الإجابة هنا.
+        </div>
+        <div class="answer-text" id="answerText">
+          هذه الشاشة مخصصة لزوار فعالية <strong>بصمة مهندس</strong> عشان يتعرفوا على تخصص هندسة الكمبيوتر بطريقة بسيطة وسريعة وتفاعلية. 💻✨
+        </div>
+        <div class="chips" id="chipsRow">
+          <span class="chip">رياضيات</span>
+          <span class="chip">برمجة</span>
+          <span class="chip">مشاريع</span>
+        </div>
+        <p class="hint">
+          ملاحظة للمقدم/ة: بعد ما يجاوب الزائر، تقدّروا تضيفون تعليق بسيط من تجربتكم في التخصص عشان يكون أقرب للواقع.
+        </p>
+      </section>
+    </section>
+
+    <footer class="footer-bar">
+      <div class="status-pill">
+        <span class="dot-mini"></span>
+        جاهز للتفاعل · اضغط سؤال من اللوحة
+      </div>
+      <div class="footer-right">
+        <span class="brand"><strong>فعالية بصمة مهندس</strong> · Computer Engineering</span>
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    // الأسئلة والإجابات (مع سؤال النصيحة)
+    const data = [
+      {
+        q: "هل لازم أكون قوي في الرياضيات؟",
+        a: "الرياضيات مهمة في هندسة الكمبيوتر، بس مو لازم تكون عبقري فيها. أهم شيء تكون فاهم الأساسيات، وعندك استعداد تتعب شوية وتتدرّب. ومع التطبيق في المواد، الصورة توضح أكثر ويصير الموضوع أسهل.",
+        tags: ["رياضيات", "أساسيات", "تدرّج في الصعوبة"]
+      },
+      {
+        q: "كم ساعة يدرس مهندس الكمبيوتر في الأسبوع؟",
+        a: "تقريبًا من ٢٠ إلى ٣٠ ساعة في الأسبوع بين محاضرات، لابات، ومشاريع. في أسابيع المشاريع والامتحانات ممكن تزيد الساعات شوي، بس الجميل إن أغلب الشغل عملي وتطبيقي.",
+        tags: ["ساعات دراسة", "لابات", "مشاريع"]
+      },
+      {
+        q: "هل التخصص صعب؟",
+        a: "التخصص يحتاج شغل وصبر، بس مو مستحيل. إذا كنت تحب التجربة وتحل مشاكل وتتعامل مع الأجهزة والبرمجة، بتستمتع حتى لو في تعب. الصعب فيه إنه يتطلب استمرار… لكن شعور إن مشروعك يشتغل ينسّي كل التعب.",
+        tags: ["تحديات", "متعة", "صبر"]
+      },
+      {
+        q: "أي مادة أصعب في هندسة الكمبيوتر؟",
+        a: "يختلف من شخص لشخص، بس غالبًا الناس يحسون بصعوبة في مواد مثل: Microprocessors، Signals & DSP، وData Structures. الصعب عادة يكون هو الأكثر فائدة لأنه يبني التفكير الهندسي العميق.",
+        tags: ["Microprocessors", "DSP", "Data Structures"]
+      },
+      {
+        q: "هل لازم أعرف برمجة قبل ما أدخل التخصص؟",
+        a: "لا، مو شرط أبدًا. التخصص يبدأ من الصفر في البرمجة، ويعلمك خطوة خطوة. المهم تكون حاب تتعلم، وما تستسلم من أول خطأ. البرمجة مهارة تتقوى مع الوقت والتجربة.",
+        tags: ["برمجة", "تعلم من الصفر", "أخطاء عادية"]
+      },
+      {
+        q: "وين يشتغل مهندس الكمبيوتر بعد التخرج؟",
+        a: "مجالات العمل كثيرة: شركات الاتصالات، الأمن السيبراني، شركات الطاقة، البنوك، شركات التقنية، المصانع، المستشفيات، وحتى ريادة الأعمال. أي مكان فيه أنظمة، شبكات، أو برمجيات… يحتاج مهندس كمبيوتر.",
+        tags: ["سوق العمل", "شركات تقنية", "فرص كثيرة"]
+      },
+      {
+        q: "أي مهارة أهم في التخصص؟",
+        a: "أهم مهارة هي التفكير المنطقي وحلّ المشكلات. بعدها يجي الصبر على الأخطاء (debugging)، والعمل ضمن فريق. التقنية تتغير، لكن طريقة تفكير المهندس هي اللي تفرق.",
+        tags: ["تفكير منطقي", "حلّ المشاكل", "Teamwork"]
+      },
+      {
+        q: "هل الرواتب زينة لمهندس الكمبيوتر؟",
+        a: "نعم، الرواتب في مجال هندسة الكمبيوتر تعتبر جيدة، وتتحسن أكثر مع الخبرة والشهادات الاحترافية والمشاريع القوية. التخصص مطلوب محليًا وعالميًا، خصوصًا مع التحول الرقمي.",
+        tags: ["رواتب", "فرص مستقبلية", "خبرة"]
+      },
+      {
+        q: "هل لازم أكون أحب الإلكترونيات؟",
+        a: "مو شرط تحب الإلكترونيات من البداية، بس بتتعرف عليها في التخصص. ومع المشاريع واللابات، كثير ناس يكتشفوا إنهم حبو الهاردوير بعد ما يجربوه عمليًا.",
+        tags: ["هاردوير", "استكشاف", "لابات"]
+      },
+      {
+        q: "هل لازم أكون اجتماعي؟",
+        a: "مو لازم تكون شخص اجتماعي جدًا، لكن مهم تقدر تشتغل مع فريق وتتكلم عن أفكارك بوضوح. أغلب مشاريع الهندسة تكون جماعية، وهذا يساعدك تطوّر مهارات التواصل شوي شوي.",
+        tags: ["تواصل", "مشاريع جماعية", "تطوير ذاتي"]
+      },
+      {
+        q: "نصيحتكم للي يفكر يدخل هندسة الكمبيوتر؟",
+        a: "إذا تحب التكنولوجيا، وتستمتع لما تفهم كيف الأشياء تشتغل من الداخل، جرّب تعطي التخصص فرصة. لا تخاف من كلمة «صعب» ولا من البرمجة. كلنا بدأنا من الصفر، واللي فرّق هو الاستمرار. أهم نصيحة: لا تستحي تسأل، ودوّر على مشاريع بسيطة تبدأ فيها حتى لو لحالك.",
+        tags: ["نصيحة", "بداية الطريق", "تشجيع"]
+      }
+    ];
+
+    const questionsGrid = document.getElementById("questionsGrid");
+    const answerQuestion = document.getElementById("answerQuestion");
+    const answerText = document.getElementById("answerText");
+    const chipsRow = document.getElementById("chipsRow");
+
+    let activeIndex = null;
+
+    // إنشاء أزرار الأسئلة
+    data.forEach((item, index) => {
+      const btn = document.createElement("button");
+      btn.className = "question-btn";
+      btn.setAttribute("data-index", index);
+
+      btn.innerHTML = `
+        <span class="icon">💡</span>
+        <span class="text">
+          ${item.q}
+          <div class="question-index">سؤال رقم ${index + 1}</div>
+        </span>
+      `;
+
+      btn.addEventListener("click", () => {
+        setActiveQuestion(index);
+      });
+
+      questionsGrid.appendChild(btn);
+    });
+
+    function setActiveQuestion(index) {
+      activeIndex = index;
+      const item = data[index];
+
+      // تحديث مظهر الأزرار
+      document.querySelectorAll(".question-btn").forEach((btn) => {
+        const i = Number(btn.getAttribute("data-index"));
+        if (i === index) {
+          btn.classList.add("active");
+        } else {
+          btn.classList.remove("active");
+        }
+      });
+
+      // تحديث لوحة الإجابة
+      answerQuestion.textContent = item.q;
+      answerText.textContent = item.a;
+
+      // تحديث الـ Chips
+      chipsRow.innerHTML = "";
+      item.tags.forEach((tag) => {
+        const span = document.createElement("span");
+        span.className = "chip";
+        span.textContent = tag;
+        chipsRow.appendChild(span);
+      });
+    }
+
+    // تقدرين تخلي أول سؤال يطلع تلقائيًا إذا حبيتي:
+    // setActiveQuestion(0);
+  </script>
+</body>
+</html>
